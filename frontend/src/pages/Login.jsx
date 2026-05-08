@@ -80,7 +80,7 @@ export default function Login() {
                   value={credentials.email}
                   onChange={e => setCredentials({ ...credentials, email: e.target.value })}
                   placeholder="you@company.com"
-                  className="input-base pl-10"
+                  className="input-base pl-icon"
                 />
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function Login() {
                   value={credentials.password}
                   onChange={e => setCredentials({ ...credentials, password: e.target.value })}
                   placeholder="••••••••"
-                  className="input-base pl-10"
+                  className="input-base pl-icon"
                 />
               </div>
             </div>

@@ -162,12 +162,12 @@ export default function Settings() {
                 <div className="relative">
                   <Lock size={16} className="absolute left-3 top-1/2 -track-y-1/2 mt-3.5 text-gray-400" />
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Current Password</label>
-                  <input type="password" placeholder="••••••••" className="input-base pl-10" value={password.currentPassword} onChange={(e) => setPassword({ ...password, currentPassword: e.target.value })} />
+                  <input type="password" placeholder="••••••••" className="input-base pl-icon" value={password.currentPassword} onChange={(e) => setPassword({ ...password, currentPassword: e.target.value })} />
                 </div>
                 <div className="relative">
                    <Lock size={16} className="absolute left-3 top-1/2 -track-y-1/2 mt-3.5 text-gray-400" />
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">New Password</label>
-                  <input type="password" placeholder="••••••••" className="input-base pl-10" value={password.newPassword} onChange={(e) => setPassword({ ...password, newPassword: e.target.value })} />
+                  <input type="password" placeholder="••••••••" className="input-base pl-icon" value={password.newPassword} onChange={(e) => setPassword({ ...password, newPassword: e.target.value })} />
                 </div>
                 <button type="submit" className="btn-primary mt-2">Update Password</button>
               </form>

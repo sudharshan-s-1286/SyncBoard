@@ -33,7 +33,7 @@ export default function ForgotPassword() {
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="relative">
             <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input className="input-base pl-10" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
+            <input className="input-base pl-icon" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
           </div>
           <button className="btn-primary w-full" disabled={loading}>{loading ? 'Sending...' : 'Send reset instructions'}</button>
         </form>

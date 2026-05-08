@@ -211,6 +211,10 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
 }
 
+.pl-icon {
+  padding-left: 2.5rem !important;
+}
+
 .dark .input-base {
   background: rgba(255,255,255,0.04);
   border-color: rgba(255,255,255,0.08);

@@ -29,7 +29,9 @@ public class TaskController {
     private final WebSocketService webSocketService;
     private final TeamAccessService teamAccessService;
 
-    public TaskController(TaskRepository taskRepository, ProjectRepository projectRepository, CommentRepository commentRepository, WebSocketService webSocketService, TeamAccessService teamAccessService) {
+    public TaskController(TaskRepository taskRepository, ProjectRepository projectRepository,
+            CommentRepository commentRepository, WebSocketService webSocketService,
+            TeamAccessService teamAccessService) {
         this.taskRepository = taskRepository;
         this.projectRepository = projectRepository;
         this.commentRepository = commentRepository;
@@ -38,7 +40,8 @@ public class TaskController {
     }
 
     @GetMapping("/project/{projectId}")
-    public List<Task> getProjectTasks(@PathVariable String projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<Task> getProjectTasks(@PathVariable String projectId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Project project = projectRepository.findById(projectId).orElseThrow();
         Team team = teamAccessService.requireTeam(project.getTeamId());
         if (!teamAccessService.isMember(team, userDetails.getId())) {
@@ -60,9 +63,9 @@ public class TaskController {
             throw new IllegalArgumentException("Forbidden");
         }
         Task savedTask = taskRepository.save(task);
-        
+
         Project proj = project;
-        if(proj != null) {
+        if (proj != null) {
             ActivityLog log = new ActivityLog();
             log.setTeamId(proj.getTeamId());
             log.setProjectId(proj.getId());
@@ -74,33 +77,36 @@ public class TaskController {
         }
         return savedTask;
     }
-    
+
     @PutMapping("/{id}/status")
-    public Task updateTaskStatus(@PathVariable String id, @RequestBody Map<String, String> payload, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Task updateTaskStatus(@PathVariable String id, @RequestBody Map<String, String> payload,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Task task = taskRepository.findById(id).orElseThrow();
         String oldStatus = task.getStatus();
         String newStatus = payload.get("status");
         task.setStatus(newStatus);
         task.setUpdatedAt(LocalDateTime.now());
         Task savedTask = taskRepository.save(task);
-        
+
         Project proj = projectRepository.findById(task.getProjectId()).orElse(null);
-        if(proj != null) {
+        if (proj != null) {
             ActivityLog log = new ActivityLog();
             log.setTeamId(proj.getTeamId());
             log.setProjectId(proj.getId());
             log.setTaskId(savedTask.getId());
             log.setUserId(userDetails.getId());
             log.setAction("Updated task status");
-            log.setDetails(userDetails.getName() + " moved task '" + task.getTitle() + "' from " + oldStatus + " to " + newStatus);
+            log.setDetails(userDetails.getName() + " moved task '" + task.getTitle() + "' from " + oldStatus + " to "
+                    + newStatus);
             webSocketService.sendActivityToTeam(proj.getTeamId(), log);
         }
-        
+
         return savedTask;
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable String id, @RequestBody Task payload, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Task updateTask(@PathVariable String id, @RequestBody Task payload,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setTitle(payload.getTitle());
         task.setDescription(payload.getDescription());
@@ -136,7 +142,8 @@ public class TaskController {
     }
 
     @PostMapping("/{taskId}/comments")
-    public Comment addComment(@PathVariable String taskId, @RequestBody Comment comment, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Comment addComment(@PathVariable String taskId, @RequestBody Comment comment,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         comment.setTaskId(taskId);
         comment.setUserId(userDetails.getId());
         comment.setCreatedAt(LocalDateTime.now());

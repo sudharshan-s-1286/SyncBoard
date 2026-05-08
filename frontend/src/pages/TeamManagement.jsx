@@ -72,7 +72,7 @@ export default function TeamManagement() {
           <input 
             type="text" 
             placeholder="Search teams..." 
-            className="input-base pl-10"
+            className="input-base pl-icon"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

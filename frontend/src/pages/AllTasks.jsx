@@ -60,7 +60,7 @@ export default function AllTasks() {
           <input 
             type="text" 
             placeholder="Search your tasks..." 
-            className="input-base pl-10"
+            className="input-base pl-icon"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

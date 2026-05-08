@@ -151,7 +151,7 @@ export default function TaskBoard() {
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-xs">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Search tasks..." className="input-base pl-9 py-2 text-xs" />
+          <input type="text" placeholder="Search tasks..." className="input-base pl-icon py-2 text-xs" />
         </div>
         <button className="btn-ghost p-2 rounded-lg border-none hover:bg-gray-100 dark:hover:bg-white/5">
           <Filter size={16} className="text-gray-400" />

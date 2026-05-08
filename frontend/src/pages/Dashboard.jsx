@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import {
   Users, Target, Clock, CheckCircle2,
   ArrowRight, ArrowUpRight, Zap, Plus,
-  TrendingUp
+  TrendingUp, X
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -20,21 +20,24 @@ export default function Dashboard() {
     activeTasks: 0,
     completedTasks: 0,
   });
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newTeam, setNewTeam] = useState({ name: '', description: '' });
+
+  const loadData = async () => {
+    try {
+      const [teamsRes, statsRes] = await Promise.all([
+        api.get('/teams'),
+        api.get('/dashboard/stats')
+      ]);
+      setTeams(teamsRes.data);
+      setStats(statsRes.data);
+    } catch (err) { 
+      console.error('Failed to load dashboard data:', err); 
+    }
+  };
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [teamsRes, statsRes] = await Promise.all([
-          api.get('/teams'),
-          api.get('/dashboard/stats')
-        ]);
-        setTeams(teamsRes.data);
-        setStats(statsRes.data);
-      } catch (err) { 
-        console.error('Failed to load dashboard data:', err); 
-      }
-    };
-    load();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -51,6 +54,18 @@ export default function Dashboard() {
   /* ── helper: greeting by time of day ── */
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
+  const handleCreateTeam = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/teams', newTeam);
+      setShowCreateModal(false);
+      setNewTeam({ name: '', description: '' });
+      loadData();
+    } catch (err) {
+      console.error('Failed to create team:', err);
+    }
+  };
 
   return (
     <div className="space-y-8 animate-fade-up">
@@ -147,7 +162,10 @@ export default function Dashboard() {
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">No teams yet</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-5 max-w-[220px]">Create your first team to start collaborating with your people.</p>
-                <button className="btn-primary text-sm">
+                <button 
+                  onClick={() => setShowCreateModal(true)}
+                  className="btn-primary text-sm"
+                >
                   <Plus size={14} /> New Team
                 </button>
               </div>
@@ -235,10 +253,65 @@ export default function Dashboard() {
 
       {/* ── Quick actions row ── */}
       <div className="flex flex-wrap gap-3">
-        <Link to="/teams" className="btn-ghost text-sm gap-1.5"><Plus size={14} /> New Team</Link>
+        <button onClick={() => setShowCreateModal(true)} className="btn-ghost text-sm gap-1.5"><Plus size={14} /> New Team</button>
         <Link to="/projects" className="btn-ghost text-sm gap-1.5"><Plus size={14} /> New Project</Link>
         <Link to="/tasks" className="btn-ghost text-sm gap-1.5"><Plus size={14} /> New Task</Link>
       </div>
+
+      {/* ── Create Modal ── */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
+          <div className="card w-full max-w-md relative z-10 animate-fade-up p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create New Team</h2>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateTeam} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Team Name</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. Design Systems"
+                  className="input-base"
+                  value={newTeam.name}
+                  onChange={(e) => setNewTeam({ ...newTeam, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description (Optional)</label>
+                <textarea 
+                  rows={3}
+                  className="input-base resize-none"
+                  placeholder="Describe your team's mission..."
+                  value={newTeam.description}
+                  onChange={(e) => setNewTeam({ ...newTeam, description: e.target.value })}
+                />
+              </div>
+              
+              <div className="flex gap-3 pt-2">
+                <button 
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="btn-ghost flex-1"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="btn-primary flex-1"
+                >
+                  Create Team
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

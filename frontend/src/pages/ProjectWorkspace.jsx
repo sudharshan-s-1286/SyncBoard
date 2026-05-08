@@ -287,7 +287,7 @@ export default function ProjectWorkspace() {
                     <input 
                       type="date" 
                       required
-                      className="input-base pl-10"
+                      className="input-base pl-icon"
                       value={newProject.deadline}
                       onChange={(e) => setNewProject({ ...newProject, deadline: e.target.value })}
                     />
