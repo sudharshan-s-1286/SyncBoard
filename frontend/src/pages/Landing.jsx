@@ -186,7 +186,7 @@ export default function Landing() {
       </section>
 
       {/* ── Features ── */}
-      <section id="features" className="py-24 px-6 bg-white dark:bg-[#0d1120]">
+      <section id="features" className="py-24 px-6 bg-white dark:bg-[#0a0e1a]">
         <div className="max-w-6xl mx-auto">
           <div className="mb-14">
             <span className="label-sm text-blue-600 dark:text-blue-400">What you get</span>
@@ -251,7 +251,7 @@ export default function Landing() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-10 px-6 bg-white dark:bg-[#0d1120] border-t border-black/5 dark:border-white/5">
+      <footer className="py-10 px-6 bg-white dark:bg-[#0a0e1a] border-t border-black/5 dark:border-white/5">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center">

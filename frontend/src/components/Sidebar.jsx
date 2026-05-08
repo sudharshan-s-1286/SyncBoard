@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-60
-        bg-white dark:bg-[#0d1120]
+        bg-white dark:bg-[#0a0e1a]
         border-r border-black/6 dark:border-white/6
         flex flex-col
         transition-transform duration-200 ease-in-out

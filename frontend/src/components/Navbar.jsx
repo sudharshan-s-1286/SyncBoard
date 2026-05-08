@@ -67,14 +67,14 @@ export default function Navbar({ setSidebarOpen }) {
               title="Notifications"
             >
               <Bell size={18} />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 ring-1 ring-white dark:ring-[#0d1120]" />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 ring-1 ring-white dark:ring-[#0a0e1a]" />
             </button>
 
             {/* Notification Dropdown Menu */}
             {showNotifications && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
-                <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-[#0d1120] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 z-50 animate-fade-up overflow-hidden">
+                <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-[#0a0e1a] rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 z-50 animate-fade-up overflow-hidden">
                   <div className="p-4 border-b border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/3 flex items-center justify-between">
                     <span className="text-xs font-black uppercase tracking-widest text-gray-500">Activity Log</span>
                     <button className="text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:underline">Mark all read</button>

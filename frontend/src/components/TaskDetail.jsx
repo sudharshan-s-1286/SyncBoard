@@ -48,7 +48,7 @@ export default function TaskDetail({ task, onClose, onUpdate }) {
   return (
     <>
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]" onClick={onClose} />
-      <aside className="fixed inset-y-0 right-0 w-full max-w-lg bg-white dark:bg-[#0d1120] shadow-2xl z-[70] flex flex-col p-0 border-l border-black/5 dark:border-white/5 animate-fade-up">
+      <aside className="fixed inset-y-0 right-0 w-full max-w-lg bg-white dark:bg-[#0a0e1a] shadow-2xl z-[70] flex flex-col p-0 border-l border-black/5 dark:border-white/5 animate-fade-up">
         {/* Header */}
         <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-gray-50/50 dark:bg-white/3">
           <div className="flex items-center gap-3">
