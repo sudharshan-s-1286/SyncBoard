@@ -1,5 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+
 import api from '../services/api';
 import { 
   Users, Plus, Search, MoreVertical, 
@@ -7,6 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function TeamManagement() {
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +17,8 @@ export default function TeamManagement() {
   const [newTeam, setNewTeam] = useState({ name: '', description: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [invite, setInvite] = useState({ teamId: '', email: '', role: 'MEMBER' });
+  const [activeMenu, setActiveMenu] = useState(null);
+
 
   const fetchTeams = async () => {
     try {
@@ -41,6 +46,18 @@ export default function TeamManagement() {
       console.error(err);
     }
   };
+
+  const handleDeleteTeam = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this team?')) return;
+    try {
+      await api.delete(`/teams/${id}`);
+      fetchTeams();
+      setActiveMenu(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
 
   const filteredTeams = teams.filter(t => 
     t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -135,9 +152,35 @@ export default function TeamManagement() {
                   }`}>
                     {team.name.charAt(0)}
                   </div>
-                  <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1">
-                    <MoreVertical size={18} />
-                  </button>
+                  <div className="relative">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMenu(activeMenu === team.id ? null : team.id);
+                      }}
+                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1"
+                    >
+                      <MoreVertical size={18} />
+                    </button>
+                    
+                    {activeMenu === team.id && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setActiveMenu(null)} />
+                        <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-[#111827] rounded-xl shadow-xl border border-black/5 dark:border-white/5 z-20 overflow-hidden animate-fade-up">
+                          <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 flex items-center gap-2">
+                            <Edit2 size={14} /> Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteTeam(team.id)}
+                            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-2"
+                          >
+                            <Trash2 size={14} /> Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {team.name}
@@ -169,9 +212,13 @@ export default function TeamManagement() {
                     <><Users size={12} /> Member</>
                   )}
                 </span>
-                <button className="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group/btn">
+                <button 
+                  onClick={() => navigate('/projects', { state: { teamId: team.id } })}
+                  className="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group/btn"
+                >
                   Manage <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
+
               </div>
             </div>
           ))}

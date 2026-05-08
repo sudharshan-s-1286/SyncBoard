@@ -228,6 +228,11 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
 }
 
+.dark select option {
+  background-color: #111827;
+  color: #f1f5f9;
+}
+
 /* ── Badge ───────────────────────────────────────── */
 .badge {
   display: inline-flex;

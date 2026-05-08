@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import { 
@@ -11,10 +12,12 @@ import {
 
 export default function ProjectWorkspace() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useContext(AuthContext);
   const [teams, setTeams] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [selectedTeamId, setSelectedTeamId] = useState('');
+  const [selectedTeamId, setSelectedTeamId] = useState(location.state?.teamId || '');
+
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newProject, setNewProject] = useState({ 
