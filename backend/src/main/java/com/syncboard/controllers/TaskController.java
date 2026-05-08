@@ -52,8 +52,9 @@ public class TaskController {
 
     @GetMapping("/assigned")
     public List<Task> getAssignedTasks(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return taskRepository.findByAssignedToId(userDetails.getId());
+        return taskRepository.findByAssigneeIdsContaining(userDetails.getId());
     }
+
 
     @PostMapping
     public Task createTask(@RequestBody Task task, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -110,14 +111,31 @@ public class TaskController {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setTitle(payload.getTitle());
         task.setDescription(payload.getDescription());
-        task.setAssignedToId(payload.getAssignedToId());
+        task.setAssigneeIds(payload.getAssigneeIds());
+        task.setWatcherIds(payload.getWatcherIds());
         task.setPriority(payload.getPriority());
         task.setStatus(payload.getStatus());
         task.setDueDate(payload.getDueDate());
         task.setAttachments(payload.getAttachments());
         task.setUpdatedAt(LocalDateTime.now());
+        
+        Task saved = taskRepository.save(task);
+        
+        // Notify watchers if status changed (simplified for now)
+        return saved;
+    }
+
+    @PostMapping("/{id}/watch")
+    public Task toggleWatch(@PathVariable String id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Task task = taskRepository.findById(id).orElseThrow();
+        if (task.getWatcherIds().contains(userDetails.getId())) {
+            task.getWatcherIds().remove(userDetails.getId());
+        } else {
+            task.getWatcherIds().add(userDetails.getId());
+        }
         return taskRepository.save(task);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable String id, @AuthenticationPrincipal UserDetailsImpl userDetails) {

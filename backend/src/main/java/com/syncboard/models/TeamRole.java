@@ -1,7 +1,9 @@
 package com.syncboard.models;
 
 public enum TeamRole {
-    TEAM_LEADER,
+    ADMIN,
+    PROJECT_MANAGER,
     MEMBER,
-    VIEWER
+    VIEWER,
+    TEAM_LEADER
 }

@@ -17,10 +17,12 @@ public class Team {
     private String id;
     private String name;
     private String description;
+    private String avatarUrl;
     private String leaderId; 
     private Set<String> memberIds = new HashSet<>();
     private List<TeamMember> members = new ArrayList<>();
     private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
     
     public void addMember(String userId) {
         memberIds.add(userId);
@@ -44,5 +46,10 @@ public class Team {
 
     public Optional<TeamMember> getMember(String userId) {
         return members.stream().filter(m -> userId.equals(m.getUserId())).findFirst();
+    }
+
+    public void removeMember(String userId) {
+        memberIds.remove(userId);
+        members.removeIf(m -> userId.equals(m.getUserId()));
     }
 }

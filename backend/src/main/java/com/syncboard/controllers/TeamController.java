@@ -10,6 +10,7 @@ import com.syncboard.services.WebSocketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,16 @@ public class TeamController {
     public List<Team> getUserTeams(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return teamRepository.findByMemberIdsContaining(userDetails.getId());
     }
+
+    @GetMapping("/{teamId}")
+    public Team getTeamById(@PathVariable String teamId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Team team = teamAccessService.requireTeam(teamId);
+        if (!teamAccessService.isMember(team, userDetails.getId())) {
+            throw new IllegalArgumentException("Forbidden");
+        }
+        return team;
+    }
+
 
     @PostMapping
     public Team createTeam(@RequestBody Team team, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -57,8 +68,11 @@ public class TeamController {
         }
         team.setName(payload.getName());
         team.setDescription(payload.getDescription());
+        team.setAvatarUrl(payload.getAvatarUrl());
+        team.setUpdatedAt(LocalDateTime.now());
         Team saved = teamRepository.save(team);
         return ResponseEntity.ok(saved);
+
     }
 
     @DeleteMapping("/{teamId}")
@@ -105,6 +119,42 @@ public class TeamController {
         TeamRole role = TeamRole.valueOf(payload.getOrDefault("role", "MEMBER").toUpperCase());
         team.addMember(memberId, role);
         teamRepository.save(team);
+
+        ActivityLog log = new ActivityLog();
+        log.setTeamId(team.getId());
+        log.setUserId(userDetails.getId());
+        log.setAction("Updated role");
+        log.setDetails("Updated role for member: " + memberId + " to " + role);
+        webSocketService.sendActivityToTeam(team.getId(), log);
+
+        return ResponseEntity.ok(team);
+    }
+
+    @DeleteMapping("/{teamId}/members/{memberId}")
+    public ResponseEntity<?> removeMember(
+            @PathVariable String teamId,
+            @PathVariable String memberId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Team team = teamAccessService.requireTeam(teamId);
+        if(!teamAccessService.isLeader(team, userDetails.getId()) && !userDetails.getId().equals(memberId)) {
+            return ResponseEntity.status(403).body("Only leader can remove other members");
+        }
+        
+        if (team.getLeaderId().equals(memberId)) {
+            return ResponseEntity.badRequest().body("Leader cannot be removed. Transfer leadership first.");
+        }
+
+        team.removeMember(memberId);
+        teamRepository.save(team);
+
+        ActivityLog log = new ActivityLog();
+        log.setTeamId(team.getId());
+        log.setUserId(userDetails.getId());
+        log.setAction("Removed member");
+        log.setDetails(userDetails.getId().equals(memberId) ? "Member left the team" : "Member removed by leader");
+        webSocketService.sendActivityToTeam(team.getId(), log);
+
         return ResponseEntity.ok(team);
     }
 }
+

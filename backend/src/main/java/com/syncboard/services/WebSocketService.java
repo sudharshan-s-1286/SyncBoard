@@ -19,4 +19,8 @@ public class WebSocketService {
         activityLogRepository.save(log);
         messagingTemplate.convertAndSend("/topic/team/" + teamId, log);
     }
+
+    public void sendNotificationToUser(String userId, com.syncboard.models.Notification notification) {
+        messagingTemplate.convertAndSendToUser(userId, "/queue/notifications", notification);
+    }
 }

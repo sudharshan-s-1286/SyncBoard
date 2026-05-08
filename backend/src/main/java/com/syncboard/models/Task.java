@@ -15,7 +15,8 @@ public class Task {
     private String projectId;
     private String title;
     private String description;
-    private String assignedToId;
+    private List<String> assigneeIds = new ArrayList<>();
+    private List<String> watcherIds = new ArrayList<>();
     private String status = "To Do"; // To Do, In Progress, Review, Done
     private String priority = "Medium"; // Low, Medium, High
     private List<String> attachments = new ArrayList<>();

@@ -98,4 +98,16 @@ public class InvitationController {
 
         return ResponseEntity.ok(Map.of("message", "Invitation accepted"));
     }
+
+    @PostMapping("/{invitationId}/reject")
+    public ResponseEntity<?> reject(@PathVariable String invitationId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Invitation invitation = invitationRepository.findById(invitationId).orElseThrow();
+        if (!"PENDING".equals(invitation.getStatus()) || !userDetails.getEmail().equalsIgnoreCase(invitation.getEmail())) {
+            return ResponseEntity.badRequest().body("Invalid invitation");
+        }
+        invitation.setStatus("REJECTED");
+        invitation.setRespondedAt(LocalDateTime.now());
+        invitationRepository.save(invitation);
+        return ResponseEntity.ok(Map.of("message", "Invitation rejected"));
+    }
 }
